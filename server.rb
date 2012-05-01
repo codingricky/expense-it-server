@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'mongo'
+requre 'base64'
 
 get '/hello' do
   "hello"
@@ -11,6 +12,22 @@ post '/expense' do
   coll = get_col
   id = coll.insert(expense)
   id.to_s
+end
+
+get '/expense/:id/receipts/:index/image' do |id, index|
+  coll = get_col
+  
+  begin
+    expense = coll.find("_id" => BSON::ObjectId(id)).to_a[0].to_json
+    
+    content_type "image/png"
+    Base64.decode64 expense["receipts"][index]["image"]
+    
+  rescue
+    status 404
+    "Expense not found"
+  end  
+   
 end
 
 get '/expense' do
