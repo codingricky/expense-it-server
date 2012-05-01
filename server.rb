@@ -95,6 +95,27 @@ get '/expense/:id/excel.xls' do |id|
   # end
 end
 
+get '/email/:email' do |email| 
+    require 'pony'
+     Pony.mail(
+      :from => "test",
+      :to => "#{email}@gmail.com",
+      :subject => "testing",
+      :body => "big body",
+      :port => '587',
+      :via => :smtp,
+      :via_options => { 
+        :address              => 'smtp.sendgrid.net', 
+        :port                 => '587', 
+        :enable_starttls_auto => true, 
+        :user_name            => ENV['SENDGRID_USERNAME'], 
+        :password             => ENV['SENDGRID_PASSWORD'], 
+        :authentication       => :plain, 
+        :domain               => ENV['SENDGRID_DOMAIN']
+      })
+      
+end
+
 def get_col
   if ENV['MONGOHQ_URL'] 
     uri = URI.parse(ENV['MONGOHQ_URL'])
