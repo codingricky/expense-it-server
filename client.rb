@@ -9,6 +9,7 @@ expense[:receipts] = [receipt_1, receipt_2]
 
 url = 'http://localhost:4567/expense'
 response = RestClient.post url, expense.to_json
-puts response
+
+puts RestClient.get url + "/" + response 
 
 # File.open('output.xls', 'w') {|f| f.write response}

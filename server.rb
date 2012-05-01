@@ -34,3 +34,10 @@ get '/expense/:id' do |id|
     "Expense not found"
   end
 end
+
+delete '/expense' do
+  coll = Mongo::Connection.new.db("mydb")["expenses"]
+  
+  coll.remove
+  coll.count.to_s
+end
