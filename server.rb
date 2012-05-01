@@ -68,12 +68,12 @@ delete '/expense' do
 end
 
 get '/expense/:id/excel.xls' do |id|
-  send_file(write_excel(id).path)  
+  send_file(generate_excel(id).path)  
 end
 
 get '/expense/:id/email/:address' do |address| 
   require 'pony'
-  file = write_excel(id)
+  file = generate_excel(id)
   Pony.mail(
       :from => "testing",
       :to => address,
