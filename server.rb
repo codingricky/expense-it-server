@@ -39,8 +39,14 @@ delete '/expense' do
 end
 
 def get_col
-  uri = URI.parse(ENV['MONGOHQ_URL'])
-  conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
-  db = conn.db(uri.path.gsub(/^\//, ''))
-  db["expenses"]
+  if ENV['MONGOHQ_URL'] 
+    uri = URI.parse(ENV['MONGOHQ_URL'])
+    conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
+    db = conn.db(uri.path.gsub(/^\//, ''))
+    db["expenses"]
+  else
+    connection = Mongo::Connection.new
+    db = connection.db("mydb")
+    db["expenses"]
+  end
 end

@@ -7,7 +7,10 @@ receipt_1 = {:client => 'Jemena', :category => 'Travel', :date => '24/4/2012', :
 receipt_2 = {:client => 'ResMed', :category => 'Travel', :date => '25/4/2012', :amount_in_cents => 9923, :description => 'Taxi from City to Bella Vista'}
 expense[:receipts] = [receipt_1, receipt_2]
 
-url = 'http://localhost:4567/expense'
+# url = 'http://localhost:4567/expense'
+url = "http://expenseitserver.heroku.com/expense"
 response = RestClient.post url, expense.to_json
 
 puts RestClient.get url + "/" + response 
+
+# File.open('output.xls', 'w') {|f| f.write response}
