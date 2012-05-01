@@ -41,11 +41,15 @@ get '/expense/:id' do |id|
 end
 
 delete '/expense' do
-  uri = URI.parse(ENV['MONGOHQ_URL'])
-  conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
-  db = conn.db(uri.path.gsub(/^\//, ''))
-  coll = db["expenses"]
+  coll = get_col
   
   coll.remove
   coll.count.to_s
+end
+
+def get_col
+  uri = URI.parse(ENV['MONGOHQ_URL'])
+  conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
+  db = conn.db(uri.path.gsub(/^\//, ''))
+  db["expenses"]
 end
