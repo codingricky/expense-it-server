@@ -2,6 +2,18 @@ require 'sinatra'
 require 'json'
 require 'mongo'
 require 'base64'
+require 'spreadsheet'
+
+DATE_COL=0
+DESCRIPTION_COL=1
+CLIENT_COL=2
+CATEGORY_COL=3
+TOTAL_COL=5
+
+EXPENSE_START_ROW = 13
+
+NAME_COL = 1
+NAME_ROW = 9
 
 get '/hello' do
   "hello"
@@ -53,6 +65,34 @@ delete '/expense' do
   
   coll.remove
   coll.count.to_s
+end
+
+get '/expense/:id/excel.xls' do |id|
+  coll = get_col
+     
+  # begin
+    expense = coll.find("_id" => BSON::ObjectId(id)).to_a[0]
+    
+    book = Spreadsheet.open("template.xls")
+    sheet = book.worksheet(0)
+    sheet[NAME_ROW, NAME_COL] = expense["name"]
+    expense["receipts"].each_with_index do |receipt, i|
+      sheet[EXPENSE_START_ROW + i, DATE_COL] = receipt["date"]
+      sheet[EXPENSE_START_ROW + i, DESCRIPTION_COL] = receipt["description"]
+      sheet[EXPENSE_START_ROW + i, CLIENT_COL] = receipt["client"]
+      sheet[EXPENSE_START_ROW + i, CATEGORY_COL] = receipt["category"]
+      amount_in_dollars = receipt["amount_in_cents"] ? receipt["amount_in_cents"].to_f/100 : receipt["amountInCents"].to_f/100
+      sheet[EXPENSE_START_ROW + i, TOTAL_COL] = amount_in_dollars
+    end
+    file = Tempfile.new('spreadsheet')
+    book.write(file.path)
+    content_type "application/vnd.ms-excel"
+    send_file(file.path)
+    
+  # rescue
+    # status 404
+    # "Expense not found"
+  # end
 end
 
 def get_col

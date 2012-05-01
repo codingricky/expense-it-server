@@ -5,7 +5,7 @@ require 'base64'
 receipt = Base64.encode64(File.read("dius-logo.png"))
 
 expense = {:name => 'John Smith'}
-receipt_1 = {:client => 'Jemena', :category => 'Travel', :date => '24/4/2012', :amount_in_cents => 1212, :description => 'Taxi from City to SOP', :image => receipt}
+receipt_1 = {:client => 'Jemena', :category => 'Travel', :date => '24/4/2012', :amount_in_cents => 1212, :description => "Taxi from City to SOP #{Time.now.to_s}", :image => receipt}
 receipt_2 = {:client => 'ResMed', :category => 'Travel', :date => '25/4/2012', :amount_in_cents => 9923, :description => 'Taxi from City to Bella Vista'}
 expense[:receipts] = [receipt_1, receipt_2]
 
