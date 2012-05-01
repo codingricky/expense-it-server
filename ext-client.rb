@@ -11,9 +11,9 @@ expense[:receipts] = [receipt_1, receipt_2]
 
 url = "http://expenseitserver.heroku.com/expense"
 response = RestClient.post url, expense.to_json
-
+puts "id=#{response}"
 receipt_response = RestClient.get url + "/" + response 
 json = JSON.parse(receipt_response)
-image_encoded = json["receipts"].first["receipt"]
+image_encoded = json["receipts"].first["image"]
 image_decoded = Base64.decode64(image_encoded)
 File.open("downloaded-image.png", "w") {|f| f.write image_decoded}

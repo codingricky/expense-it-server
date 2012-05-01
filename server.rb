@@ -18,14 +18,13 @@ get '/expense/:id/receipts/:index/image' do |id, index|
   coll = get_col
   
   begin
-    expense = coll.find("_id" => BSON::ObjectId(id)).to_a[0].to_json
-    
+    expense = coll.find("_id" => BSON::ObjectId(id)).to_a[0]
+    image_encoded = expense["receipts"][index.to_i]["image"]
     content_type "image/png"
-    Base64.decode64 expense["receipts"][index]["image"]
-    
+    Base64.decode64 image_encoded
   rescue
     status 404
-    "Expense not found"
+    "Image not found"
   end  
    
 end
