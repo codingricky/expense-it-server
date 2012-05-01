@@ -16,14 +16,24 @@ post '/expense' do
   puts id
   id.to_s
 end
-
+# 
+# get '/expense' do
+#    connection = Mongo::Connection.new
+#    db = connection.db("mydb")
+#    coll = db["expenses"]
+#    expenses = coll.find.collect {|expense| expense.to_json}
+#    
+#    expenses.join
+# end
+# 
 get '/expense' do
-   connection = Mongo::Connection.new
-   db = connection.db("mydb")
-   coll = db["expenses"]
-   expenses = coll.find.collect {|expense| expense.to_json}
+  uri = URI.parse(ENV['MONGOHQ_URL'])
+  conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
+  db = conn.db(uri.path.gsub(/^\//, ''))
+  coll = db["expenses"]
+  expenses = coll.find.collect {|expense| expense.to_json}
    
-   expenses.join
+  expenses.join
 end
 
 get '/expense/:id' do |id|
