@@ -73,7 +73,7 @@ get '/expense/:id/excel.xls' do |id|
   # begin
     expense = coll.find("_id" => BSON::ObjectId(id)).to_a[0]
     
-    book = Spreadsheet.open("public/template.xls")
+    book = Spreadsheet.open("template.xls")
     sheet = book.worksheet(0)
     sheet[NAME_ROW, NAME_COL] = expense["name"]
     expense["receipts"].each_with_index do |receipt, i|
