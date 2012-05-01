@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'json'
 require 'mongo'
-requre 'base64'
+require 'base64'
 
 get '/hello' do
   "hello"
