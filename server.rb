@@ -21,3 +21,16 @@ get '/expense' do
    
    expenses.join
 end
+
+get '/expense/:id' do |id|
+  connection = Mongo::Connection.new
+  db = connection.db("mydb")
+  coll = db["expenses"]
+  
+  begin
+    coll.find("_id" => BSON::ObjectId(id)).to_a[0].to_json
+  rescue
+    status 404
+    "Expense not found"
+  end
+end
