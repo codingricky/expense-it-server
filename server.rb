@@ -77,7 +77,7 @@ get '/expense/:id/email/:address' do |:address|
      Pony.mail(
       :from => "testing",
       :to => address,
-      :attachments => {"expenses.xls" => file.read}
+      :attachments => {"expenses.xls" => file.read},
       :subject => "Expenses",
       :body => "Please find attached my expenses",
       :port => '587',
