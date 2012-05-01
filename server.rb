@@ -71,7 +71,7 @@ get '/expense/:id/excel.xls' do |id|
   send_file(generate_excel(id).path)  
 end
 
-get '/expense/:id/email/:address' do |address| 
+get '/expense/:id/email/:address' do |id, address| 
   require 'pony'
   file = generate_excel(id)
   Pony.mail(
@@ -90,6 +90,7 @@ get '/expense/:id/email/:address' do |address|
         :password             => ENV['SENDGRID_PASSWORD'], 
         :authentication       => :plain, 
         :domain               => ENV['SENDGRID_DOMAIN']})
+  "emai sent"
 end
 
 def generate_excel(id)
