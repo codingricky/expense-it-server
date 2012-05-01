@@ -8,30 +8,21 @@ end
 
 post '/expense' do
   expense = JSON.parse(request.body.read)
-  uri = URI.parse(ENV['MONGOHQ_URL'])
-  conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
-  db = conn.db(uri.path.gsub(/^\//, ''))
-  coll = db["expenses"]
+  coll = get_col
   id = coll.insert(expense)
   id.to_s
 end
 
 get '/expense' do
-  uri = URI.parse(ENV['MONGOHQ_URL'])
-  conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
-  db = conn.db(uri.path.gsub(/^\//, ''))
-  coll = db["expenses"]
+  coll = get_col
   expenses = coll.find.collect {|expense| expense.to_json}
    
   expenses.join
 end
 
 get '/expense/:id' do |id|
-  uri = URI.parse(ENV['MONGOHQ_URL'])
-  conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
-  db = conn.db(uri.path.gsub(/^\//, ''))
-  coll = db["expenses"]
-  
+  coll = get_col
+     
   begin
     coll.find("_id" => BSON::ObjectId(id)).to_a[0].to_json
   rescue
