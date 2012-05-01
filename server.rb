@@ -2,6 +2,10 @@ require 'sinatra'
 require 'json'
 require 'mongo'
 
+get '/hello' do
+  "hello"
+end
+
 post '/expense' do
   expense = JSON.parse(request.body.read)
   
