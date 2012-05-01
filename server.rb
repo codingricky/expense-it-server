@@ -68,40 +68,18 @@ delete '/expense' do
 end
 
 get '/expense/:id/excel.xls' do |id|
-  coll = get_col
-     
-  # begin
-    expense = coll.find("_id" => BSON::ObjectId(id)).to_a[0]
-    
-    book = Spreadsheet.open("template.xls", 'r')
-    sheet = book.worksheet(0)
-    sheet[NAME_ROW, NAME_COL] = expense["name"]
-    expense["receipts"].each_with_index do |receipt, i|
-      sheet[EXPENSE_START_ROW + i, DATE_COL] = receipt["date"]
-      sheet[EXPENSE_START_ROW + i, DESCRIPTION_COL] = receipt["description"]
-      sheet[EXPENSE_START_ROW + i, CLIENT_COL] = receipt["client"]
-      sheet[EXPENSE_START_ROW + i, CATEGORY_COL] = receipt["category"]
-      amount_in_dollars = receipt["amount_in_cents"] ? receipt["amount_in_cents"].to_f/100 : receipt["amountInCents"].to_f/100
-      sheet[EXPENSE_START_ROW + i, TOTAL_COL] = amount_in_dollars
-    end
-    file = Tempfile.new('spreadsheet')
-    book.write(file.path)
-    content_type "application/vnd.ms-excel"
-    send_file(file.path)
-    
-  # rescue
-    # status 404
-    # "Expense not found"
-  # end
+  send_file(write_excel(id).path)  
 end
 
-get '/email/:email' do |email| 
+get '/expense/:id/email/:address' do |:address| 
+  file = write_excel(id)
     require 'pony'
      Pony.mail(
-      :from => "test",
-      :to => "#{email}@gmail.com",
-      :subject => "testing",
-      :body => "big body",
+      :from => "testing",
+      :to => address,
+      :attachments => {"expenses.xls" => file.read}
+      :subject => "Expenses",
+      :body => "Please find attached my expenses",
       :port => '587',
       :via => :smtp,
       :via_options => { 
@@ -114,6 +92,26 @@ get '/email/:email' do |email|
         :domain               => ENV['SENDGRID_DOMAIN']
       })
       
+end
+
+def generate_excel(id)
+  coll = get_col
+  expense = coll.find("_id" => BSON::ObjectId(id)).to_a[0]
+   
+   book = Spreadsheet.open("template.xls", 'r')
+   sheet = book.worksheet(0)
+   sheet[NAME_ROW, NAME_COL] = expense["name"]
+   expense["receipts"].each_with_index do |receipt, i|
+     sheet[EXPENSE_START_ROW + i, DATE_COL] = receipt["date"]
+     sheet[EXPENSE_START_ROW + i, DESCRIPTION_COL] = receipt["description"]
+     sheet[EXPENSE_START_ROW + i, CLIENT_COL] = receipt["client"]
+     sheet[EXPENSE_START_ROW + i, CATEGORY_COL] = receipt["category"]
+     amount_in_dollars = receipt["amount_in_cents"] ? receipt["amount_in_cents"].to_f/100 : receipt["amountInCents"].to_f/100
+     sheet[EXPENSE_START_ROW + i, TOTAL_COL] = amount_in_dollars
+   end
+   file = Tempfile.new('spreadsheet')
+   book.write(file.path)
+   file
 end
 
 def get_col
