@@ -17,5 +17,7 @@ get '/expense' do
    connection = Mongo::Connection.new
    db = connection.db("mydb")
    coll = db["expenses"]
-   coll.find.each {|r| puts r.inspect}
+   expenses = coll.find.collect {|expense| expense.to_json}
+   
+   expenses.join
 end
