@@ -67,7 +67,7 @@ get '/expense/:id' do |id|
   end
 end
 
-delete '/expense' do
+delete '/expenses' do
   coll = get_col
   
   coll.remove
@@ -78,7 +78,17 @@ get '/expense/:id/excel.xls' do |id|
   send_file(generate_excel(id).path)  
 end
 
+post '/expense/:id/email' do |id|
+  email(id, address)
+  "email sent"  
+end
+
 get '/expense/:id/email/:address' do |id, address| 
+  email(id, address)
+  "email sent"
+end
+
+def email(id, address)
   require 'pony'
   file = generate_excel(id)
   Pony.mail(
@@ -97,7 +107,7 @@ get '/expense/:id/email/:address' do |id, address|
         :password             => ENV['SENDGRID_PASSWORD'], 
         :authentication       => :plain, 
         :domain               => ENV['SENDGRID_DOMAIN']})
-  "emai sent"
+
 end
 
 def generate_excel(id)
