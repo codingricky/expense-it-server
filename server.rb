@@ -75,7 +75,8 @@ delete '/expenses' do
 end
 
 get '/expense/:id/excel.xls' do |id|
-  send_file(generate_excel(id).path)  
+  file = generate_excel(id)
+  send_file(file.path)  
 end
 
 post '/expense/:id/email' do |id|
@@ -91,10 +92,20 @@ end
 def email(id, address)
   require 'pony'
   file = generate_excel(id)
+  
+  attachments = Hash.new
+  attachments["expenses.xls"] = file.read
+  expense = get_col.find("_id" => BSON::ObjectId(id)).to_a[0]
+  expense["receipts"].each_with_index do |receipt, i|
+    begin
+      attachments["#{i}.png"] = Base64.decode64 receipt['image']
+    rescue
+    end
+  end
   Pony.mail(
       :from => "testing",
       :to => address,
-      :attachments => {"expenses.xls" => file.read},
+      :attachments => attachments,
       :subject => "Expenses",
       :body => "Please find attached my expenses",
       :port => '587',
