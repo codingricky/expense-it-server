@@ -79,13 +79,13 @@ get '/expense/:id/excel.xls' do |id|
 end
 
 post '/expense/:id/email' do |id|
-  email(id, address)
-  "email sent"  
+  email(id, params[:emailAddress])
+  "email sent to #{params[:emailAddress]}"  
 end
 
 get '/expense/:id/email/:address' do |id, address| 
   email(id, address)
-  "email sent"
+  "email sent to #{address}"
 end
 
 def email(id, address)
