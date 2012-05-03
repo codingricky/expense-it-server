@@ -15,6 +15,13 @@ EXPENSE_START_ROW = 13
 NAME_COL = 1
 NAME_ROW = 9
 
+get '/' do
+  puts "Show expenses"
+  coll = get_col
+  @expenses = coll.find
+  erb :expenses
+end
+
 get '/hello' do
   "hello"
 end
