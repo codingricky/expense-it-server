@@ -24,7 +24,7 @@
     <td><%= receipt['description'] %></td>
     <td>
 	   <% if receipt['image'] %>
-	   <a href="/expense/<%=expense['_id']%>/receipts/<%=i-1%>/image"><img src="data:image/png;base64,<%= receipt['image'] %>"/ alt="image"></a>
+	   <a href="/expense/<%=expense['_id']%>/receipts/<%=i-1%>/image"><img src="data:image/png;base64,<%= receipt['image'] %>" alt="image"></a>
 	   <% end %>
 	</td>
   </tr>
